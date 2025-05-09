@@ -115,7 +115,7 @@ button {
 }
 
 .utility-btn {
-    background-color: #0d6efd;
+    background-color: hsl(216, 98%, 52%);
     border: none;
     color: white;
     font-weight: 600;
