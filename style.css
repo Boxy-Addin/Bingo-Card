@@ -124,6 +124,7 @@ button {
 }
 
 .utility-btn:hover {
+    color: white;
     background-color: #0b5ed7;
     transform: translateY(-1px);
 }
