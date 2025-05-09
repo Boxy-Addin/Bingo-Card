@@ -280,8 +280,8 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
             title: '🎉 Ball Drawn!',
             html: `
                 <div style="
-                    width: 100px;
-                    height: 100px;
+                    width: 120px;
+                    height: 120px;
                     margin: 0 auto;
                     border-radius: 50%;
                     background: white;
