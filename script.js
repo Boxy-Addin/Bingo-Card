@@ -253,7 +253,7 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
     setTimeout(() => {
         overlay.classList.add("d-none");
 
-        const letters = ["B", "I", "N", "G", "O"];
+        const letters = ["B-", "I-", "N-", "G-", "O-"];
         const ranges = {
             B: [1, 15],
             I: [16, 30],
