@@ -45,33 +45,43 @@
 
   <div class="container pb-5">
     <!-- Pattern Selection -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <div class="d-flex flex-wrap gap-2" role="group" id="patternCheckboxes">
-          <h5 class="card-title fw-bold mb-3">🏆 Win Patterns</h5>
-          <input type="checkbox" class="btn-check" id="patternHorizontal" value="horizontal" autocomplete="off" checked>
-          <label class="btn pattern-btn" for="patternHorizontal">Horizontal</label>
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
 
-          <input type="checkbox" class="btn-check" id="patternVertical" value="vertical" autocomplete="off" checked>
-          <label class="btn pattern-btn" for="patternVertical">Vertical</label>
+    <!-- Mobile Toggle Button -->
+    <button class="btn btn-primary d-lg-none w-100 mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#patternCollapse" aria-expanded="false" aria-controls="patternCollapse">
+      🏆 Toggle Win Patterns
+    </button>
 
-          <input type="checkbox" class="btn-check" id="patternDiagonal" value="diagonal" autocomplete="off" checked>
-          <label class="btn pattern-btn" for="patternDiagonal">Diagonal</label>
+    <!-- Collapsible Section -->
+    <div class="collapse d-lg-block" id="patternCollapse">
+      <h5 class="card-title fw-bold mb-3">🏆 Win Patterns</h5>
+      <div class="d-flex flex-wrap gap-2" role="group" id="patternCheckboxes">
+        <input type="checkbox" class="btn-check" id="patternHorizontal" value="horizontal" autocomplete="off" checked>
+        <label class="btn pattern-btn" for="patternHorizontal">Horizontal</label>
 
-          <input type="checkbox" class="btn-check" id="patternX" value="x" autocomplete="off">
-          <label class="btn pattern-btn" for="patternX">X</label>
+        <input type="checkbox" class="btn-check" id="patternVertical" value="vertical" autocomplete="off" checked>
+        <label class="btn pattern-btn" for="patternVertical">Vertical</label>
 
-          <input type="checkbox" class="btn-check" id="patternY" value="y" autocomplete="off">
-          <label class="btn pattern-btn" for="patternY">Y</label>
+        <input type="checkbox" class="btn-check" id="patternDiagonal" value="diagonal" autocomplete="off" checked>
+        <label class="btn pattern-btn" for="patternDiagonal">Diagonal</label>
 
-          <input type="checkbox" class="btn-check" id="patternDiamond" value="diamond" autocomplete="off">
-          <label class="btn pattern-btn" for="patternDiamond">Diamond</label>
+        <input type="checkbox" class="btn-check" id="patternX" value="x" autocomplete="off">
+        <label class="btn pattern-btn" for="patternX">X</label>
 
-          <input type="checkbox" class="btn-check" id="patternFull" value="full" autocomplete="off">
-          <label class="btn pattern-btn" for="patternFull">Full Card</label>
-        </div>
+        <input type="checkbox" class="btn-check" id="patternY" value="y" autocomplete="off">
+        <label class="btn pattern-btn" for="patternY">Y</label>
+
+        <input type="checkbox" class="btn-check" id="patternDiamond" value="diamond" autocomplete="off">
+        <label class="btn pattern-btn" for="patternDiamond">Diamond</label>
+
+        <input type="checkbox" class="btn-check" id="patternFull" value="full" autocomplete="off">
+        <label class="btn pattern-btn" for="patternFull">Full Card</label>
       </div>
     </div>
+
+  </div>
+</div>
 
     <!-- Game Controls -->
     <div class="text-center mb-4">
