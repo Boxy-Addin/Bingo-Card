@@ -1,0 +1,229 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    text-align: center;
+}
+
+.bingo-card {
+    background: #fff;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.bingo-header {
+    font-weight: bold;
+    font-size: 1.25rem;
+    background-color: white;
+    color: #0d6efd;
+    border-radius: 6px;
+    padding: 6px 0;
+    margin-bottom: 6px;
+}
+
+.bingo-cell {
+    background-color: #e9ecef;
+    padding: 12px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.bingo-cell.active {
+    background-color: #0fdd76;
+    color: white;
+}
+
+.bingo-cell.free {
+    background-color: #6c757d;
+    color: white;
+    font-weight: bold;
+}
+
+input.bingo-input {
+    width: 100%;
+    border: none;
+    background-color: #fff;
+    text-align: center;
+    font-weight: bold;
+}
+
+input.bingo-input:focus {
+    outline: none;
+    background-color: #e2e6ea;
+}
+
+@media (max-width: 576px) {
+    .row.justify-content-center>.col-auto {
+        flex: 1 1 100%;
+    }
+
+    .form-check.form-switch {
+        justify-content: flex-start;
+    }
+}
+
+button {
+    white-space: nowrap;
+}
+
+#patternCheckboxes .form-check {
+    min-width: 120px;
+}
+
+#patternCheckboxes .btn {
+    min-width: 110px;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+#patternCheckboxes .btn:hover {
+    transform: scale(1.05);
+}
+
+.pattern-btn {
+    color: black;
+    border: 1.5px solid rgba(0, 0, 0, 0);
+    background-color: rgb(236, 235, 235);
+    padding: 6px 16px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+}
+
+.pattern-btn:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.btn-check:checked+.pattern-btn {
+    background-color: #176beb;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.utility-btn {
+    color: black;
+    border: 1.5px solid rgba(0, 0, 0, 0);
+    background-color: rgb(236, 236, 236);
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 6px 18px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+}
+
+.utility-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.utility-btn:focus, .utility-btn:active, .utility-btn.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+.toggle-style {
+    border: 2px solid black;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-style:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.bottle-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+}
+
+.bottle-shake {
+    width: 200px;
+    height: 200px;
+    background: url('bottle.png') no-repeat center center;
+    background-size: contain;
+    animation: shake 2.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: rotate(0);
+    }
+
+    10% {
+        transform: rotate(6deg);
+    }
+
+    20% {
+        transform: rotate(-6deg);
+    }
+
+    30% {
+        transform: rotate(5deg);
+    }
+
+    40% {
+        transform: rotate(-5deg);
+    }
+
+    50% {
+        transform: rotate(4deg);
+    }
+
+    60% {
+        transform: rotate(-4deg);
+    }
+
+    70% {
+        transform: rotate(3deg);
+    }
+
+    80% {
+        transform: rotate(-3deg);
+    }
+
+    90% {
+        transform: rotate(1deg);
+    }
+}
+
+.history-ball {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid black;
+    background-color: white;
+    color: #0d6efd;
+    font-weight: bold;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+}
+
+.history-ball:hover {
+    transform: scale(1.1);
+}
