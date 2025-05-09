@@ -253,7 +253,7 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
     setTimeout(() => {
         overlay.classList.add("d-none");
 
-        const letters = ["B -", "I -", "N -", "G -", "O -"];
+        const letters = ["B", "I", "N", "G", "O"];
         const ranges = {
             B: [1, 15],
             I: [16, 30],
@@ -267,7 +267,7 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
             const letter = letters[Math.floor(Math.random() * 5)];
             const range = ranges[letter];
             const number = Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
-            drawnBall = `${letter}${number}`;
+            drawnBall = `${letter} - ${number}`;
         } while (drawnBalls.has(drawnBall) && drawnBalls.size < 75); // avoid duplicates
 
         drawnBalls.add(drawnBall);
