@@ -321,17 +321,31 @@ document.getElementById("clearHistoryBtn").addEventListener("click", () => {
 });
 
 document.getElementById("resetBtn").addEventListener("click", () => {
-    // 1. Untoggle all numbers (remove active/marked class)
-    document.querySelectorAll(".bingo-cell.active").forEach(cell => {
-        cell.classList.remove("active");
+    // 1. Untoggle all numbers (remove active/marked class), except "FREE"
+    cards.forEach(card => {
+        card.rows.forEach(row => {
+            row.forEach(cell => {
+                if (cell.number !== "FREE") {
+                    cell.active = false;
+                }
+            });
+        });
     });
 
-    // 2. Reset win detection (e.g., remove win highlights)
-    document.querySelectorAll(".bingo-cell.win").forEach(cell => {
-        cell.classList.remove("win");
-    });
+    // Re-render the cards to reflect unmarked state
+    renderCards();
 
-    window.hasCelebrated = false;
-    console.log("Game reset");
+    // 2. Clear drawn balls set and update the display
+    drawnBalls.clear();
+    document.getElementById("ballHistory").innerHTML = '';
+    updateBallCounts();
+
+    // 3. Optional: Show confirmation
+    Swal.fire({
+        title: "Reset Complete!",
+        text: "All cards and ball history have been reset.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false
+    });
 });
-
