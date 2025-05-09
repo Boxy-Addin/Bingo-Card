@@ -246,6 +246,7 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
     bottle.classList.add("bottle-shake");
 
     const shakeSound = document.getElementById("shakeSound");
+    shakeSound.volume = 1.0;
     shakeSound.play().catch((error) => {
         console.error('Sound play error:', error);
     });
