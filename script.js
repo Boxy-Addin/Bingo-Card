@@ -331,15 +331,7 @@ document.getElementById("resetBtn").addEventListener("click", () => {
         cell.classList.remove("win");
     });
 
-    // 3. Hide confetti if it's still running (not needed if it stops itself)
-    // No action needed for canvas-confetti — it's temporary
-
-    // 4. Clear any internal flags used to track win state
     window.hasCelebrated = false;
-
-    drawnBalls = []; 
-    updateBallHistoryUI(); 
-
     console.log("Game reset");
 });
 
