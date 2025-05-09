@@ -188,7 +188,7 @@ exportBtn.addEventListener("click", () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "bingo-presets.json";
+    a.download = "Bingo-Preset.json";
     a.click();
     URL.revokeObjectURL(url);
 });
