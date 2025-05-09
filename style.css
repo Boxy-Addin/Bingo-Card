@@ -8,8 +8,8 @@ body {
 
 /* Navigation Bar */
 .navbar {
-    background: linear-gradient(90deg, #007bff, #6610f2);
-    color: white;
+    background: white;
+    color: Black;
     border-radius: 0.75rem;
     padding: 1rem;
     margin-bottom: 2rem;
@@ -20,7 +20,7 @@ body {
 }
 
 .navbar h2 {
-    color: Black;
+    color: white;
     font-weight: 700;
     margin: 0;
 }
