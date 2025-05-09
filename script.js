@@ -4,7 +4,7 @@ const editModeToggle = document.getElementById("editModeToggle");
 const exportBtn = document.getElementById("exportBtn");
 const importBtn = document.getElementById("importBtn");
 const importInput = document.getElementById("importInput");
-
+const shakeSound = new Audio("shake.mp3");
 let cards = [];
 
 const ranges = {
