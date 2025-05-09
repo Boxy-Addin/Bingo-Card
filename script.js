@@ -298,7 +298,7 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
                 </div>
             `,
             showConfirmButton: false,
-            timer: 3000,
+            timer: 2000,
         });
 
         // Add to history display
