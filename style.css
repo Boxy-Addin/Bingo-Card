@@ -8,8 +8,8 @@ body {
 
 /* Navigation Bar */
 .navbar {
-    background: white;
-    color: Black;
+    background: linear-gradient(90deg, #007bff, #6610f2);
+    color: white;
     border-radius: 0.75rem;
     padding: 1rem;
     margin-bottom: 2rem;
