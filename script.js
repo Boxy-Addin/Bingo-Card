@@ -4,7 +4,6 @@ const editModeToggle = document.getElementById("editModeToggle");
 const exportBtn = document.getElementById("exportBtn");
 const importBtn = document.getElementById("importBtn");
 const importInput = document.getElementById("importInput");
-const shakeSound = new Audio("shake.mp3"); // Update path if needed
 
 let cards = [];
 
@@ -246,8 +245,10 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
     void bottle.offsetWidth;
     bottle.classList.add("bottle-shake");
 
-    shakeSound.currentTime = 0; // Rewind to start
-    shakeSound.play(); 
+    const shakeSound = document.getElementById("shakeSound");
+    shakeSound.play().catch((error) => {
+        console.error('Sound play error:', error);
+    });
 
     setTimeout(() => {
         overlay.classList.add("d-none");
