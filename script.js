@@ -101,14 +101,17 @@ function checkBingo(card) {
     for (let pattern of patternsToCheck) {
         if (pattern === "FULL") {
             const full = card.rows.every(row => row.every(cell => cell.active));
-            if (full) return true;
+            if (full) return "FULL";
         } else {
-            if (pattern.every(([r, c]) => isActive(r, c))) return true;
+            if (pattern.every(([r, c]) => isActive(r, c))) {
+                return pattern; // return winning coordinates
+            }
         }
     }
 
     return false;
 }
+
 
 function showBingoCelebration() {
     Swal.fire({
@@ -161,7 +164,25 @@ function createCardElement(card, index) {
                     cell.active = !cell.active;
                     div.classList.toggle("active", cell.active);
                     saveGameState();
-                    if (checkBingo(card)) showBingoCelebration();
+                    const result = checkBingo(card);
+                if (result) {
+                    showBingoCelebration();
+
+                    if (result !== "FULL") {
+                        // Highlight winning cells
+                        const cardElement = cardContainer.children[cardIndex];
+                        const grid = cardElement.querySelectorAll(".card-grid")[1];
+                        result.forEach(([r, c]) => {
+                            const index = r * 5 + c;
+                            grid.children[index].classList.add("winning-cell");
+                        });
+                    } else {
+                        // FULL card, highlight everything
+                        const cardElement = cardContainer.children[cardIndex];
+                        const grid = cardElement.querySelectorAll(".card-grid")[1];
+                        [...grid.children].forEach(cell => cell.classList.add("winning-cell"));
+                    }
+                }
                 });
                 if (cell.active) div.classList.add("active");
             }
@@ -203,7 +224,11 @@ function renderCards() {
     cards.forEach((card, index) => {
         createCardElement(card, index);
     });
+
+    // Clear old winning highlights
+    document.querySelectorAll(".winning-cell").forEach(el => el.classList.remove("winning-cell"));
 }
+
 
 function updateBallCounts() {
     document.getElementById("ballsDrawnCount").textContent = drawnBalls.size;
@@ -295,7 +320,25 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
                 });
             });
 
-            if (checkBingo(card)) showBingoCelebration();
+            const result = checkBingo(card);
+            if (result) {
+                showBingoCelebration();
+
+                if (result !== "FULL") {
+                    // Highlight winning cells
+                    const cardElement = cardContainer.children[cardIndex];
+                    const grid = cardElement.querySelectorAll(".card-grid")[1];
+                    result.forEach(([r, c]) => {
+                        const index = r * 5 + c;
+                        grid.children[index].classList.add("winning-cell");
+                    });
+                } else {
+                    // FULL card, highlight everything
+                    const cardElement = cardContainer.children[cardIndex];
+                    const grid = cardElement.querySelectorAll(".card-grid")[1];
+                    [...grid.children].forEach(cell => cell.classList.add("winning-cell"));
+                }
+            }
         });
 
 
