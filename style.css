@@ -129,7 +129,8 @@ button {
     transform: translateY(-1px);
 }
 
-.utility-btn:focus, .utility-btn:active {
+.utility-btn:focus,
+.utility-btn:active {
     outline: none;
     box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.3);
 }
@@ -160,7 +161,7 @@ button {
     transform: translateY(-1px);
 }
 
-.btn-check:checked + .pattern-btn {
+.btn-check:checked+.pattern-btn {
     background-color: #176beb;
     color: white;
 }
@@ -188,17 +189,49 @@ button {
 }
 
 @keyframes crazyShake {
-    0%   { transform: rotate(0deg) translate(0, 0); }
-    10%  { transform: rotate(10deg) translate(2px, -2px); }
-    20%  { transform: rotate(-10deg) translate(-2px, 2px); }
-    30%  { transform: rotate(12deg) translate(3px, -3px); }
-    40%  { transform: rotate(-12deg) translate(-3px, 3px); }
-    50%  { transform: rotate(8deg) translate(2px, 2px); }
-    60%  { transform: rotate(-8deg) translate(-2px, -2px); }
-    70%  { transform: rotate(5deg) translate(1px, -1px); }
-    80%  { transform: rotate(-5deg) translate(-1px, 1px); }
-    90%  { transform: rotate(3deg) translate(0, 0); }
-    100% { transform: rotate(0deg) translate(0, 0); }
+    0% {
+        transform: rotate(0deg) translate(0, 0);
+    }
+
+    10% {
+        transform: rotate(10deg) translate(2px, -2px);
+    }
+
+    20% {
+        transform: rotate(-10deg) translate(-2px, 2px);
+    }
+
+    30% {
+        transform: rotate(12deg) translate(3px, -3px);
+    }
+
+    40% {
+        transform: rotate(-12deg) translate(-3px, 3px);
+    }
+
+    50% {
+        transform: rotate(8deg) translate(2px, 2px);
+    }
+
+    60% {
+        transform: rotate(-8deg) translate(-2px, -2px);
+    }
+
+    70% {
+        transform: rotate(5deg) translate(1px, -1px);
+    }
+
+    80% {
+        transform: rotate(-5deg) translate(-1px, 1px);
+    }
+
+    90% {
+        transform: rotate(3deg) translate(0, 0);
+    }
+
+    100% {
+        transform: rotate(0deg) translate(0, 0);
+    }
 }
 
 /* Number History Balls */
@@ -214,7 +247,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s;
 }
 
@@ -228,7 +261,7 @@ button {
         font-size: 1.4rem;
     }
 
-    .row.justify-content-center > .col-auto {
+    .row.justify-content-center>.col-auto {
         flex: 1 1 100%;
     }
 
@@ -236,7 +269,8 @@ button {
         justify-content: flex-start;
     }
 
-    .utility-btn, .pattern-btn {
+    .utility-btn,
+    .pattern-btn {
         width: 100%;
         margin-bottom: 0.5rem;
     }
@@ -244,4 +278,9 @@ button {
     #patternContainer .btn-group {
         flex-direction: column;
     }
+}
+
+.winning-cell {
+    outline: 3px solid gold;
+    box-shadow: 0 0 10px 3px gold;
 }
