@@ -163,7 +163,13 @@ function createCardElement(card, index) {
                     cell.active = !cell.active;
                     div.classList.toggle("active", cell.active);
                     saveGameState();
-                    if (checkBingo(card)) showBingoCelebration();
+
+                    const result = checkBingo(card);
+                    if (result) {
+                        showBingoCelebration();
+                        const cardElement = cardContainer.children[index];
+                        highlightWinningPattern(card, result, cardElement);
+                    }
                 });
                 if (cell.active) div.classList.add("active");
             }
@@ -309,14 +315,8 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
             // Clear old highlights
             grid.querySelectorAll(".winning-cell").forEach(el => el.classList.remove("winning-cell"));
 
-            if (result === "FULL") {
-                [...grid.children].forEach(cell => cell.classList.add("winning-cell"));
-            } else {
-                result.forEach(([r, c]) => {
-                    const index = r * 5 + c;
-                    grid.children[index].classList.add("winning-cell");
-                });
-            }
+            highlightWinningPattern(card, result, cardElement);
+
         }
 
         });
@@ -368,6 +368,21 @@ document.getElementById("resetBtn").addEventListener("click", () => {
         showConfirmButton: false
     });
 });
+
+function highlightWinningPattern(card, result, cardElement) {
+    const grid = cardElement.querySelectorAll(".card-grid")[1];
+    grid.querySelectorAll(".winning-cell").forEach(el => el.classList.remove("winning-cell"));
+
+    if (result === "FULL") {
+        [...grid.children].forEach(cell => cell.classList.add("winning-cell"));
+    } else {
+        result.forEach(([r, c]) => {
+            const index = r * 5 + c;
+            grid.children[index].classList.add("winning-cell");
+        });
+    }
+}
+
 
 loadGameState();
 renderCards();
