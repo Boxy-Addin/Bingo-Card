@@ -103,7 +103,9 @@ function checkBingo(card) {
             const full = card.rows.every(row => row.every(cell => cell.active));
             if (full) return "FULL";
         } else {
-            if (pattern.every(([r, c]) => isActive(r, c))) return pattern;
+            if (pattern.every(([r, c]) => isActive(r, c))) {
+                return pattern; // ← this is an array of [r, c]
+            }
         }
     }
 
