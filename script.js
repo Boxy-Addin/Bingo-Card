@@ -276,6 +276,29 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
 
         drawnBalls.add(drawnBall);
 
+        // Auto-mark matching numbers on all cards
+        const drawnNum = parseInt(rawBall.slice(1)); // Get number part like 5 from B5
+
+        cards.forEach((card, cardIndex) => {
+            card.rows.forEach((row, rowIndex) => {
+                row.forEach((cell, colIndex) => {
+                    if (cell.number == drawnNum && !cell.active) {
+                        cell.active = true;
+
+                        // Visually update the cell in the DOM
+                        const cardElement = cardContainer.children[cardIndex];
+                        const grid = cardElement.querySelectorAll(".card-grid")[1];
+                        const cellIndex = rowIndex * 5 + colIndex;
+                        const cellDiv = grid.children[cellIndex];
+                        cellDiv.classList.add("active");
+                    }
+                });
+            });
+
+            if (checkBingo(card)) showBingoCelebration();
+        });
+
+
         Swal.fire({
             title: '🎉 Ball Drawn!',
             html: `<div style="width:120px;height:120px;margin:auto;border-radius:50%;background:white;border:4px solid black;font-size:1.8rem;font-weight:bold;display:flex;align-items:center;justify-content:center;color:#0d6efd;box-shadow:0 4px 10px rgba(0,0,0,0.3);">${drawnBall}</div>`,
