@@ -1,3 +1,5 @@
+// script.js - Full Version with Auto-Marking + Pattern Highlighting + LocalStorage
+
 const cardContainer = document.getElementById("cardContainer");
 const addCardBtn = document.getElementById("addCardBtn");
 const editModeToggle = document.getElementById("editModeToggle");
@@ -101,9 +103,11 @@ function checkBingo(card) {
     for (let pattern of patternsToCheck) {
         if (pattern === "FULL") {
             const full = card.rows.every(row => row.every(cell => cell.active));
-            if (full) return true;
+            if (full) return "FULL";
         } else {
-            if (pattern.every(([r, c]) => isActive(r, c))) return true;
+            if (pattern.every(([r, c]) => isActive(r, c))) {
+                return pattern;
+            }
         }
     }
 
@@ -118,6 +122,16 @@ function showBingoCelebration() {
         confirmButtonText: "Continue"
     });
     confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+}
+
+function renderCards() {
+    cardContainer.innerHTML = "";
+    cards.forEach((card, index) => {
+        createCardElement(card, index);
+    });
+
+    // Clear old winning highlights
+    document.querySelectorAll(".winning-cell").forEach(el => el.classList.remove("winning-cell"));
 }
 
 function createCardElement(card, index) {
@@ -161,10 +175,11 @@ function createCardElement(card, index) {
                     cell.active = !cell.active;
                     div.classList.toggle("active", cell.active);
                     saveGameState();
-                    if (checkBingo(card)) showBingoCelebration();
+                    renderCards(); // reflect visual changes
                 });
                 if (cell.active) div.classList.add("active");
             }
+
             grid.appendChild(div);
         });
     });
@@ -198,18 +213,12 @@ function createCardElement(card, index) {
     cardContainer.appendChild(col);
 }
 
-function renderCards() {
-    cardContainer.innerHTML = "";
-    cards.forEach((card, index) => {
-        createCardElement(card, index);
-    });
-}
-
 function updateBallCounts() {
     document.getElementById("ballsDrawnCount").textContent = drawnBalls.size;
     document.getElementById("ballsRemainingCount").textContent = totalBalls - drawnBalls.size;
 }
 
+// EVENTS
 addCardBtn.addEventListener("click", () => {
     cards.push(generateCardData());
     renderCards();
@@ -250,6 +259,7 @@ importInput.addEventListener("change", (e) => {
     }
 });
 
+// BALL DRAW
 document.getElementById("rollBallBtn").addEventListener("click", () => {
     const overlay = document.getElementById("bottleOverlay");
     overlay.classList.remove("d-none");
@@ -262,7 +272,6 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
 
     setTimeout(() => {
         overlay.classList.add("d-none");
-
         const letters = ["B", "I", "N", "G", "O"];
         let drawnBall = '';
         let rawBall = '';
@@ -275,42 +284,42 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
         } while (drawnBalls.has(drawnBall) && drawnBalls.size < totalBalls);
 
         drawnBalls.add(drawnBall);
+        const drawnNum = parseInt(rawBall.slice(1));
 
-        // Auto-mark matching numbers on all cards
-        const drawnNum = parseInt(rawBall.slice(1)); // Get number part like 5 from B5
-
+        // Auto-mark matching numbers and check for win
         cards.forEach((card, cardIndex) => {
             card.rows.forEach((row, rowIndex) => {
                 row.forEach((cell, colIndex) => {
                     if (cell.number == drawnNum && !cell.active) {
                         cell.active = true;
-
-                        // Visually update the cell in the DOM
                         const cardElement = cardContainer.children[cardIndex];
                         const grid = cardElement.querySelectorAll(".card-grid")[1];
-                        const cellIndex = rowIndex * 5 + colIndex;
-                        const cellDiv = grid.children[cellIndex];
-                        cellDiv.classList.add("active");
+                        const index = rowIndex * 5 + colIndex;
+                        grid.children[index].classList.add("active");
                     }
                 });
             });
 
-            if (checkBingo(card)) showBingoCelebration();
-        });
-
-
-        Swal.fire({
-            title: '🎉 Ball Drawn!',
-            html: `<div style="width:120px;height:120px;margin:auto;border-radius:50%;background:white;border:4px solid black;font-size:1.8rem;font-weight:bold;display:flex;align-items:center;justify-content:center;color:#0d6efd;box-shadow:0 4px 10px rgba(0,0,0,0.3);">${drawnBall}</div>`,
-            showConfirmButton: false,
-            timer: 2000,
+            const result = checkBingo(card);
+            if (result) {
+                showBingoCelebration();
+                const cardElement = cardContainer.children[cardIndex];
+                const grid = cardElement.querySelectorAll(".card-grid")[1];
+                if (result === "FULL") {
+                    [...grid.children].forEach(cell => cell.classList.add("winning-cell"));
+                } else {
+                    result.forEach(([r, c]) => {
+                        const idx = r * 5 + c;
+                        grid.children[idx].classList.add("winning-cell");
+                    });
+                }
+            }
         });
 
         const ballEl = document.createElement("div");
         ballEl.className = "history-ball";
         ballEl.textContent = drawnBall;
         document.getElementById("ballHistory").appendChild(ballEl);
-
         updateBallCounts();
         saveGameState();
     }, 2800);
@@ -336,7 +345,6 @@ document.getElementById("resetBtn").addEventListener("click", () => {
     updateBallCounts();
     renderCards();
     saveGameState();
-
     Swal.fire({
         title: "Reset Complete!",
         text: "All cards and ball history have been reset.",
