@@ -5,7 +5,10 @@ const exportBtn = document.getElementById("exportBtn");
 const importBtn = document.getElementById("importBtn");
 const importInput = document.getElementById("importInput");
 const shakeSound = new Audio("shake.mp3");
+const totalBalls = 75;
+
 let cards = [];
+let drawnBalls = new Set();
 
 const ranges = {
     B: [1, 15],
@@ -32,11 +35,42 @@ function generateCardData() {
         for (let col = 0; col < 5; col++) {
             card.rows[row][col] = {
                 number: (row === 2 && col === 2) ? "FREE" : cols[col][row],
-                active: (row === 2 && col === 2) // FREE is auto-active
+                active: (row === 2 && col === 2)
             };
         }
     }
     return card;
+}
+
+function saveGameState() {
+    localStorage.setItem("bingoCards", JSON.stringify(cards));
+    localStorage.setItem("drawnBalls", JSON.stringify(Array.from(drawnBalls)));
+    localStorage.setItem("editMode", editModeToggle.checked);
+}
+
+function loadGameState() {
+    try {
+        const savedCards = JSON.parse(localStorage.getItem("bingoCards"));
+        const savedBalls = JSON.parse(localStorage.getItem("drawnBalls"));
+        const savedEditMode = localStorage.getItem("editMode");
+
+        if (Array.isArray(savedCards)) cards = savedCards;
+        else cards = [generateCardData()];
+
+        if (Array.isArray(savedBalls)) {
+            drawnBalls = new Set(savedBalls);
+            savedBalls.forEach(ball => {
+                const ballEl = document.createElement("div");
+                ballEl.className = "history-ball";
+                ballEl.textContent = ball;
+                document.getElementById("ballHistory").appendChild(ballEl);
+            });
+        }
+
+        if (savedEditMode !== null) editModeToggle.checked = savedEditMode === "true";
+    } catch (e) {
+        cards = [generateCardData()];
+    }
 }
 
 function checkBingo(card) {
@@ -61,17 +95,15 @@ function checkBingo(card) {
         full: ["FULL"]
     };
 
-    const selectedPatterns = Array.from(document.querySelectorAll('#patternCheckboxes input[type=checkbox]:checked'))
-        .map(cb => cb.value);
-
+    const selectedPatterns = Array.from(document.querySelectorAll('#patternCheckboxes input[type=checkbox]:checked')).map(cb => cb.value);
     const patternsToCheck = selectedPatterns.flatMap(p => patternMap[p]);
 
     for (let pattern of patternsToCheck) {
         if (pattern === "FULL") {
             const full = card.rows.every(row => row.every(cell => cell.active));
-            if (full) return true;
+            if (full) return "FULL";
         } else {
-            if (pattern.every(([r, c]) => isActive(r, c))) return true;
+            if (pattern.every(([r, c]) => isActive(r, c))) return pattern;
         }
     }
 
@@ -86,17 +118,12 @@ function showBingoCelebration() {
         icon: "success",
         confirmButtonText: "Continue"
     });
-    confetti({
-        particleCount: 150,
-        spread: 100,
-        origin: { y: 0.6 }
-    });
+    confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
 }
 
 function createCardElement(card, index) {
     const col = document.createElement("div");
     col.className = "col-md-4";
-
     const cardDiv = document.createElement("div");
     cardDiv.className = "bingo-card";
 
@@ -126,6 +153,7 @@ function createCardElement(card, index) {
                 input.value = cell.number;
                 input.addEventListener("change", (e) => {
                     cards[index].rows[rowIndex][colIndex].number = e.target.value;
+                    saveGameState();
                 });
                 div.appendChild(input);
             } else {
@@ -133,6 +161,7 @@ function createCardElement(card, index) {
                 div.addEventListener("click", () => {
                     cell.active = !cell.active;
                     div.classList.toggle("active", cell.active);
+                    saveGameState();
                     if (checkBingo(card)) showBingoCelebration();
                 });
                 if (cell.active) div.classList.add("active");
@@ -159,29 +188,40 @@ function createCardElement(card, index) {
             if (result.isConfirmed) {
                 cards.splice(index, 1);
                 renderCards();
+                saveGameState();
                 Swal.fire("Removed!", "The card has been removed.", "success");
             }
         });
     });
-    cardDiv.appendChild(removeBtn);
 
+    cardDiv.appendChild(removeBtn);
     col.appendChild(cardDiv);
     cardContainer.appendChild(col);
 }
 
 function renderCards() {
     cardContainer.innerHTML = "";
+    document.querySelectorAll(".winning-cell").forEach(el => el.classList.remove("winning-cell"));
     cards.forEach((card, index) => {
         createCardElement(card, index);
     });
 }
 
+function updateBallCounts() {
+    document.getElementById("ballsDrawnCount").textContent = drawnBalls.size;
+    document.getElementById("ballsRemainingCount").textContent = totalBalls - drawnBalls.size;
+}
+
 addCardBtn.addEventListener("click", () => {
     cards.push(generateCardData());
     renderCards();
+    saveGameState();
 });
 
-editModeToggle.addEventListener("change", renderCards);
+editModeToggle.addEventListener("change", () => {
+    renderCards();
+    saveGameState();
+});
 
 exportBtn.addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(cards)], { type: "application/json" });
@@ -193,9 +233,7 @@ exportBtn.addEventListener("click", () => {
     URL.revokeObjectURL(url);
 });
 
-importBtn.addEventListener("click", () => {
-    importInput.click();
-});
+importBtn.addEventListener("click", () => importInput.click());
 
 importInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
@@ -205,7 +243,8 @@ importInput.addEventListener("change", (e) => {
             try {
                 cards = JSON.parse(event.target.result);
                 renderCards();
-            } catch (err) {
+                saveGameState();
+            } catch {
                 alert("Invalid JSON file.");
             }
         };
@@ -213,55 +252,20 @@ importInput.addEventListener("change", (e) => {
     }
 });
 
-function getSelectedPatterns() {
-    const checkboxes = document.querySelectorAll('#patternCheckboxes input:checked');
-    return Array.from(checkboxes).map(cb => cb.value);
-}
-
-
-cards.push(generateCardData());
-renderCards();
-
-// Keep track of drawn balls
-let drawnBalls = new Set();
-let totalBalls = 75;
-
-// Update the ball counts in the modal
-function updateBallCounts() {
-    const ballsDrawnCount = document.getElementById('ballsDrawnCount');
-    const ballsRemainingCount = document.getElementById('ballsRemainingCount');
-
-    ballsDrawnCount.textContent = drawnBalls.size;
-    ballsRemainingCount.textContent = totalBalls - drawnBalls.size;
-}
-
-// Roll the ball and show the result
 document.getElementById("rollBallBtn").addEventListener("click", () => {
     const overlay = document.getElementById("bottleOverlay");
     overlay.classList.remove("d-none");
-
     const bottle = overlay.querySelector(".bottle-shake");
     bottle.classList.remove("bottle-shake");
     void bottle.offsetWidth;
     bottle.classList.add("bottle-shake");
-
     shakeSound.currentTime = 0;
-    shakeSound.play().catch(error => {
-        console.error('Sound play error:', error);
-    });
+    shakeSound.play().catch(console.error);
 
     setTimeout(() => {
         overlay.classList.add("d-none");
 
         const letters = ["B", "I", "N", "G", "O"];
-        const ranges = {
-            B: [1, 15],
-            I: [16, 30],
-            N: [31, 45],
-            G: [46, 60],
-            O: [61, 75]
-        };
-
         let drawnBall = '';
         let rawBall = '';
         do {
@@ -270,77 +274,93 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
             const number = Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
             rawBall = `${letter}${number}`;
             drawnBall = `${letter}-${number}`;
-
-        } while (drawnBalls.has(drawnBall) && drawnBalls.size < 75); // avoid duplicates
+        } while (drawnBalls.has(drawnBall) && drawnBalls.size < totalBalls);
 
         drawnBalls.add(drawnBall);
 
-        // Show popup
+        // Auto-mark matching numbers on all cards
+        const drawnNum = parseInt(rawBall.slice(1)); // Get number part like 5 from B5
+
+        cards.forEach((card, cardIndex) => {
+            card.rows.forEach((row, rowIndex) => {
+                row.forEach((cell, colIndex) => {
+                    if (cell.number == drawnNum && !cell.active) {
+                        cell.active = true;
+
+                        // Visually update the cell in the DOM
+                        const cardElement = cardContainer.children[cardIndex];
+                        const grid = cardElement.querySelectorAll(".card-grid")[1];
+                        const cellIndex = rowIndex * 5 + colIndex;
+                        const cellDiv = grid.children[cellIndex];
+                        cellDiv.classList.add("active");
+                    }
+                });
+            });
+
+            const result = checkBingo(card);
+
+            if (result) {
+                showBingoCelebration();
+
+                const cardElement = cardContainer.children[cardIndex];
+                const grid = cardElement.querySelectorAll(".card-grid")[1];
+
+                // Remove any previous highlights first
+                grid.querySelectorAll(".winning-cell").forEach(el => el.classList.remove("winning-cell"));
+
+                if (result === "FULL") {
+                    // Full card win: highlight all cells
+                    [...grid.children].forEach(cell => cell.classList.add("winning-cell"));
+                } else {
+                    // Highlight only winning cells
+                    result.forEach(([r, c]) => {
+                        const index = r * 5 + c;
+                        grid.children[index].classList.add("winning-cell");
+                    });
+                }
+            }
+
+        });
+
+
         Swal.fire({
             title: '🎉 Ball Drawn!',
-            html: `
-                <div style="
-                    width: 120px;
-                    height: 120px;
-                    margin: 0 auto;
-                    border-radius: 50%;
-                    background: white;
-                    border: 4px solid black;
-                    font-size: 1.8rem;
-                    font-weight: bold;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #0d6efd;
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-                ">
-                    ${drawnBall}
-                </div>
-            `,
+            html: `<div style="width:120px;height:120px;margin:auto;border-radius:50%;background:white;border:4px solid black;font-size:1.8rem;font-weight:bold;display:flex;align-items:center;justify-content:center;color:#0d6efd;box-shadow:0 4px 10px rgba(0,0,0,0.3);">${drawnBall}</div>`,
             showConfirmButton: false,
             timer: 2000,
         });
 
-        // Add to history display
         const ballEl = document.createElement("div");
         ballEl.className = "history-ball";
         ballEl.textContent = drawnBall;
         document.getElementById("ballHistory").appendChild(ballEl);
 
-        // Update counts
         updateBallCounts();
-
+        saveGameState();
     }, 2800);
 });
 
-// Clear history
 document.getElementById("clearHistoryBtn").addEventListener("click", () => {
-    drawnBalls.clear();
-    document.getElementById("ballHistory").innerHTML = ''; // Clear history display
-    updateBallCounts(); // Reset counts
-});
-
-document.getElementById("resetBtn").addEventListener("click", () => {
-    // 1. Untoggle all numbers (remove active/marked class), except "FREE"
-    cards.forEach(card => {
-        card.rows.forEach(row => {
-            row.forEach(cell => {
-                if (cell.number !== "FREE") {
-                    cell.active = false;
-                }
-            });
-        });
-    });
-
-    // Re-render the cards to reflect unmarked state
-    renderCards();
-
-    // 2. Clear drawn balls set and update the display
     drawnBalls.clear();
     document.getElementById("ballHistory").innerHTML = '';
     updateBallCounts();
+    saveGameState();
+});
 
-    // 3. Optional: Show confirmation
+document.getElementById("resetBtn").addEventListener("click", () => {
+    cards.forEach(card => {
+        card.rows.forEach(row => {
+            row.forEach(cell => {
+                if (cell.number !== "FREE") cell.active = false;
+            });
+        });
+    });
+    drawnBalls.clear();
+    document.getElementById("ballHistory").innerHTML = '';
+    updateBallCounts();
+    renderCards();
+    saveGameState();
+
     Swal.fire({
         title: "Reset Complete!",
         text: "All cards and ball history have been reset.",
@@ -349,3 +369,7 @@ document.getElementById("resetBtn").addEventListener("click", () => {
         showConfirmButton: false
     });
 });
+
+loadGameState();
+renderCards();
+updateBallCounts();
