@@ -5,38 +5,6 @@ const exportBtn = document.getElementById("exportBtn");
 const importBtn = document.getElementById("importBtn");
 const importInput = document.getElementById("importInput");
 const shakeSound = new Audio("shake.mp3");
-
-function saveGameState() {
-    localStorage.setItem("bingoCards", JSON.stringify(cards));
-    localStorage.setItem("drawnBalls", JSON.stringify(Array.from(drawnBalls)));
-    localStorage.setItem("editMode", editModeToggle.checked);
-}
-
-function loadGameState() {
-    const savedCards = localStorage.getItem("bingoCards");
-    const savedBalls = localStorage.getItem("drawnBalls");
-    const savedEditMode = localStorage.getItem("editMode");
-
-    if (savedCards) {
-        try {
-            cards = JSON.parse(savedCards);
-        } catch {
-            cards = [generateCardData()];
-        }
-    } else {
-        cards = [generateCardData()];
-    }
-
-    if (savedBalls) {
-        drawnBalls = new Set(JSON.parse(savedBalls));
-    }
-
-    if (savedEditMode !== null) {
-        editModeToggle.checked = savedEditMode === "true";
-    }
-}
-
-
 let cards = [];
 
 const ranges = {
@@ -165,7 +133,6 @@ function createCardElement(card, index) {
                 div.addEventListener("click", () => {
                     cell.active = !cell.active;
                     div.classList.toggle("active", cell.active);
-                    saveGameState();
                     if (checkBingo(card)) showBingoCelebration();
                 });
                 if (cell.active) div.classList.add("active");
@@ -192,7 +159,6 @@ function createCardElement(card, index) {
             if (result.isConfirmed) {
                 cards.splice(index, 1);
                 renderCards();
-                saveGameState();
                 Swal.fire("Removed!", "The card has been removed.", "success");
             }
         });
@@ -213,14 +179,9 @@ function renderCards() {
 addCardBtn.addEventListener("click", () => {
     cards.push(generateCardData());
     renderCards();
-    saveGameState();
 });
 
-editModeToggle.addEventListener("change", () => {
-    renderCards();
-    saveGameState(); 
-});
-
+editModeToggle.addEventListener("change", renderCards);
 
 exportBtn.addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(cards)], { type: "application/json" });
@@ -258,9 +219,8 @@ function getSelectedPatterns() {
 }
 
 
-loadGameState();
+cards.push(generateCardData());
 renderCards();
-updateBallCounts();
 
 // Keep track of drawn balls
 let drawnBalls = new Set();
@@ -349,7 +309,6 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
 
         // Update counts
         updateBallCounts();
-        saveGameState();
 
     }, 2800);
 });
@@ -358,8 +317,7 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
 document.getElementById("clearHistoryBtn").addEventListener("click", () => {
     drawnBalls.clear();
     document.getElementById("ballHistory").innerHTML = ''; // Clear history display
-    updateBallCounts();
-    saveGameState(); // Reset counts
+    updateBallCounts(); // Reset counts
 });
 
 document.getElementById("resetBtn").addEventListener("click", () => {
@@ -381,7 +339,6 @@ document.getElementById("resetBtn").addEventListener("click", () => {
     drawnBalls.clear();
     document.getElementById("ballHistory").innerHTML = '';
     updateBallCounts();
-    saveGameState();
 
     // 3. Optional: Show confirmation
     Swal.fire({
