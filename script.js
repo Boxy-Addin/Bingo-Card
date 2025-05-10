@@ -5,6 +5,38 @@ const exportBtn = document.getElementById("exportBtn");
 const importBtn = document.getElementById("importBtn");
 const importInput = document.getElementById("importInput");
 const shakeSound = new Audio("shake.mp3");
+
+function saveGameState() {
+    localStorage.setItem("bingoCards", JSON.stringify(cards));
+    localStorage.setItem("drawnBalls", JSON.stringify(Array.from(drawnBalls)));
+    localStorage.setItem("editMode", editModeToggle.checked);
+}
+
+function loadGameState() {
+    const savedCards = localStorage.getItem("bingoCards");
+    const savedBalls = localStorage.getItem("drawnBalls");
+    const savedEditMode = localStorage.getItem("editMode");
+
+    if (savedCards) {
+        try {
+            cards = JSON.parse(savedCards);
+        } catch {
+            cards = [generateCardData()];
+        }
+    } else {
+        cards = [generateCardData()];
+    }
+
+    if (savedBalls) {
+        drawnBalls = new Set(JSON.parse(savedBalls));
+    }
+
+    if (savedEditMode !== null) {
+        editModeToggle.checked = savedEditMode === "true";
+    }
+}
+
+
 let cards = [];
 
 const ranges = {
