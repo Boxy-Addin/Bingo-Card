@@ -104,7 +104,7 @@ function checkBingo(card) {
             if (full) return "FULL";
         } else {
             if (pattern.every(([r, c]) => isActive(r, c))) {
-                return pattern; // ← this is an array of [r, c]
+                return pattern; // ← RETURN the array of coordinates
             }
         }
     }
@@ -302,25 +302,23 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
             const result = checkBingo(card);
 
             if (result) {
-                showBingoCelebration();
+            showBingoCelebration();
 
-                const cardElement = cardContainer.children[cardIndex];
-                const grid = cardElement.querySelectorAll(".card-grid")[1];
+            const cardElement = cardContainer.children[cardIndex];
+            const grid = cardElement.querySelectorAll(".card-grid")[1];
 
-                // Remove any previous highlights first
-                grid.querySelectorAll(".winning-cell").forEach(el => el.classList.remove("winning-cell"));
+            // Clear old highlights
+            grid.querySelectorAll(".winning-cell").forEach(el => el.classList.remove("winning-cell"));
 
-                if (result === "FULL") {
-                    // Full card win: highlight all cells
-                    [...grid.children].forEach(cell => cell.classList.add("winning-cell"));
-                } else {
-                    // Highlight only winning cells
-                    result.forEach(([r, c]) => {
-                        const index = r * 5 + c;
-                        grid.children[index].classList.add("winning-cell");
-                    });
-                }
+            if (result === "FULL") {
+                [...grid.children].forEach(cell => cell.classList.add("winning-cell"));
+            } else {
+                result.forEach(([r, c]) => {
+                    const index = r * 5 + c;
+                    grid.children[index].classList.add("winning-cell");
+                });
             }
+        }
 
         });
 
