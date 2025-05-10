@@ -283,4 +283,5 @@ button {
 .winning-cell {
     outline: 3px solid gold;
     box-shadow: 0 0 10px 3px gold;
+    z-index: 1;
 }
