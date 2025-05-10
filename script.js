@@ -104,14 +104,13 @@ function checkBingo(card) {
             if (full) return "FULL";
         } else {
             if (pattern.every(([r, c]) => isActive(r, c))) {
-                return pattern; // ← RETURN the array of coordinates
+                return pattern; // return coordinate array
             }
         }
     }
 
     return false;
 }
-
 
 function showBingoCelebration() {
     Swal.fire({
