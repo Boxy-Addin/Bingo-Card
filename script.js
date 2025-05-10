@@ -165,6 +165,7 @@ function createCardElement(card, index) {
                 div.addEventListener("click", () => {
                     cell.active = !cell.active;
                     div.classList.toggle("active", cell.active);
+                    saveGameState();
                     if (checkBingo(card)) showBingoCelebration();
                 });
                 if (cell.active) div.classList.add("active");
@@ -191,6 +192,7 @@ function createCardElement(card, index) {
             if (result.isConfirmed) {
                 cards.splice(index, 1);
                 renderCards();
+                saveGameState();
                 Swal.fire("Removed!", "The card has been removed.", "success");
             }
         });
@@ -211,9 +213,14 @@ function renderCards() {
 addCardBtn.addEventListener("click", () => {
     cards.push(generateCardData());
     renderCards();
+    saveGameState();
 });
 
-editModeToggle.addEventListener("change", renderCards);
+editModeToggle.addEventListener("change", () => {
+    renderCards();
+    saveGameState(); 
+});
+
 
 exportBtn.addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(cards)], { type: "application/json" });
@@ -251,8 +258,9 @@ function getSelectedPatterns() {
 }
 
 
-cards.push(generateCardData());
+loadGameState();
 renderCards();
+updateBallCounts();
 
 // Keep track of drawn balls
 let drawnBalls = new Set();
@@ -341,6 +349,7 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
 
         // Update counts
         updateBallCounts();
+        saveGameState();
 
     }, 2800);
 });
@@ -349,7 +358,8 @@ document.getElementById("rollBallBtn").addEventListener("click", () => {
 document.getElementById("clearHistoryBtn").addEventListener("click", () => {
     drawnBalls.clear();
     document.getElementById("ballHistory").innerHTML = ''; // Clear history display
-    updateBallCounts(); // Reset counts
+    updateBallCounts();
+    saveGameState(); // Reset counts
 });
 
 document.getElementById("resetBtn").addEventListener("click", () => {
@@ -371,6 +381,7 @@ document.getElementById("resetBtn").addEventListener("click", () => {
     drawnBalls.clear();
     document.getElementById("ballHistory").innerHTML = '';
     updateBallCounts();
+    saveGameState();
 
     // 3. Optional: Show confirmation
     Swal.fire({
