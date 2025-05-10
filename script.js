@@ -101,14 +101,15 @@ function checkBingo(card) {
     for (let pattern of patternsToCheck) {
         if (pattern === "FULL") {
             const full = card.rows.every(row => row.every(cell => cell.active));
-            if (full) return true;
+            if (full) return "FULL";
         } else {
-            if (pattern.every(([r, c]) => isActive(r, c))) return true;
+            if (pattern.every(([r, c]) => isActive(r, c))) return pattern;
         }
     }
 
     return false;
 }
+
 
 function showBingoCelebration() {
     Swal.fire({
